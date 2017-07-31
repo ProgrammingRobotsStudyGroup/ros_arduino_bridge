@@ -83,8 +83,17 @@ class AStar(object):
   def update_pid(self, Kp, Kd, Ki, Ko):
     self.write_pack(33,"hhhh", Kp, Kd, Ki, Ko)
 
- def write_servos(self, left_srv, right_srv):
-     self.write_pack(41, 'hh', left_srv, right_srv)
+  def write_servos(self, left_srv, right_srv):
+     self.write_pack(41, 'BB', left_srv, right_srv)
+
+  def write_servo_left(self, left_srv):
+      self.write_pack(41, 'B', left_srv)
+
+  def write_servo_right(self, right_srv):
+      self.write_pack(42, 'B', right_srv)
+
+  def read_servos(self):
+    return self.read_unpack(43, 2, 'BB')
 
   def play_notes(self, notes):
     self.write_pack(45, 'B15s', 1, notes.encode("ascii"))

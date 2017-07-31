@@ -151,14 +151,24 @@ class ArduinoAStarBus(Arduino):
 
     def servo_write(self, id, pos):
         ''' Usage: servo_write(id, pos)
-            Position is given in radians and converted to degrees before sending
+            Position in degrees (integer between 0 & 180)
         '''
+        if id == 0:
+            self.mutex.acquire()
+            self.a_star.write_servo_left(pos)
+            self.mutex.release()
+        elif id == 1:
+            self.mutex.acquire()
+            self.a_star.write_servo_right(pos)
+            self.mutex.release()
         return True
 
     def servo_read(self, id):
         ''' Usage: servo_read(id)
-            The returned position is converted from degrees to radians
+            Position in degrees (integer between 0 & 180)
         '''
+        if id >= 0 and id < 2:
+            return self.a_star.read_servos()[id]
         return 0
 
     def ping(self, pin):
@@ -216,6 +226,21 @@ if __name__ == "__main__":
         time.sleep(1.0)
     myArduino.a_star.leds(0,0,0)
     #print "Current encoder counts", myArduino.encoders()
+
+    print "Move servoes:"
+    left_srv, rght_srv = myArduino.a_star.read_servos()
+    print "Servos: left = ", left_srv, " right = ", rght_srv
+    myArduino.a_star.write_servos(120, 60);
+    time.sleep(1.0);
+
+    left_srv, rght_srv = myArduino.a_star.read_servos()
+    print "Servos: left = ", left_srv, " right = ", rght_srv
+
+    myArduino.a_star.write_servos(150, 30);
+    time.sleep(1.0);
+
+    left_srv, rght_srv = myArduino.a_star.read_servos()
+    print "Servos: left = ", left_srv, " right = ", rght_srv
 
     print "Connection test successful.",
 
